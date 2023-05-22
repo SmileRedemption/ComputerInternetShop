@@ -7,26 +7,26 @@ namespace ComputerInternetShop.ProductContainer
 {
     public class Shop : IProductContainer
     {
-        private readonly Dictionary<IParametersReader, IProductFactory> _productsParameter;
+        private readonly Dictionary<IEnumerable<IReadOnlyDictionary<string, string>>, IProductFactory> _productsParameter;
         private readonly List<Product> _products;
 
         public IEnumerable<Product> Products => _products;
 
         public Shop()
         {
-            _productsParameter = new Dictionary<IParametersReader, IProductFactory>()
+            _productsParameter = new Dictionary<IEnumerable<IReadOnlyDictionary<string, string>>, IProductFactory>()
             {
                 {
-                    new MemoryReader(), new MemoryFactory()
+                    new ParametersReader().GetProductsParameters<Memory>(), new MemoryFactory()
                 },
                 {
-                    new HardDriveReader(), new HardDriveFactory()
+                    new ParametersReader().GetProductsParameters<HardDrive>(), new HardDriveFactory()
                 },
                 {
-                    new MotherBoardReader(), new MotherboardFactory()
+                    new ParametersReader().GetProductsParameters<MotherBoard>(), new MotherboardFactory()
                 },
                 {
-                    new ProcessorReader(), new ProcessorFactory()
+                    new ParametersReader().GetProductsParameters<Processor>(), new ProcessorFactory()
                 }
             };
             
@@ -38,8 +38,7 @@ namespace ComputerInternetShop.ProductContainer
         {
             foreach (var (reader, value) in _productsParameter)
             {
-                var parameters = reader.GetProductsParameters();
-                foreach (var dictionary in parameters)
+                foreach (var dictionary in reader)
                 {
                     _products.Add(value.CreateProduct(dictionary));
                 }

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using ComputerInternetShop.Products;
 
 namespace ComputerInternetShop.Readers
 {
     public interface IParametersReader
     {
-        IReadOnlyCollection<IReadOnlyDictionary<string, string>> GetProductsParameters();
+        IEnumerable<IReadOnlyDictionary<string, string>> GetProductsParameters<T>() where T : Product;
     }
 }
